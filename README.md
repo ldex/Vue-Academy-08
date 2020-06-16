@@ -1,24 +1,13 @@
-# demovue
+# App Démo Vue
 
-## Project setup
-```
-npm install
-```
+Projet démo <a href="https://vue.ac" target="_blank">Académie Vue</a> en Juin 2020.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Setup du projet
 
-### Compiles and minifies for production
-```
-npm run build
-```
+Vous devez d'abord restaurer les dépendances npm:  
+Commande: `npm install`
 
-### Lints and fixes files
-```
-npm run lint
-```
+## Essayez l'app!
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Commande: `npm run serve` pour initialiser un serveur de dev (ou avec vue ui).  
+L'app est disponible sur: `http://localhost:8080/`
