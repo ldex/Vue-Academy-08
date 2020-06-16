@@ -1,18 +1,47 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <section v-if="error">
+      {{error.message}}
+    </section>
+    <section v-else>
+        <div v-if="loading">
+          <h2>Loading products...</h2>
+        </div>
+        <product-list v-else :products="products"></product-list>
+    </section>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import ProductList from '@/components/ProductList.vue';
+import ProductService from '@/services/ProductService.js';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
-  }
+    ProductList
+  },
+  data() {
+    return {
+      products: [],
+      error: null,
+      loading: false
+    }
+  },
+  created () {
+    this.loading = true;
+      ProductService
+        .getProducts()
+        .then(response => {
+          this.products = response.data
+        })
+        .catch(error => {
+          this.error = error;
+        })
+        .finally(
+          () => this.loading = false
+        );
+  },
 }
 </script>
 
@@ -21,8 +50,6 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
