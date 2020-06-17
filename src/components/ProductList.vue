@@ -11,21 +11,27 @@
         </fieldset>
 
         <ul class="products">
-            <li v-for="product in sortedFilteredProducts" v-bind:key="product.id"
+            <li v-for="product in sortedFilteredPaginatedProducts" v-bind:key="product.id"
                 v-bind:class='{ discontinued: product.discontinued, selected: product === selectedProduct }'
-                @click="selectedProduct = product"
+                @click="onSelect(product)"
                 :title="JSON.stringify(product)">
                 <span class="name">{{ product.name }}</span>
                 <span class="description">{{ product.description }}</span>
                 <span class="price">{{ product.price }}</span>
             </li>
         </ul>
-        <product-details :product="selectedProduct"></product-details>
+        <button @click="prevPage" :disabled="pageNumber===1">
+          &lt; Previous
+        </button>
+        Page {{ pageNumber }}       
+        <button @click="nextPage" :disabled="pageNumber >= pageCount">
+          Next &gt;
+        </button>
     </div>
 </template>
 
 <script>
-import ProductDetails from '@/components/ProductDetails.vue';
+
 
     export default {
         data() {
@@ -35,16 +41,22 @@ import ProductDetails from '@/components/ProductDetails.vue';
                 filterName: '',
                 sortName: 'modifiedDate',
                 sortDir: 'desc',
+                pageNumber: 1,
             }
         },
         props: {
           products: {
             type: Array,
             default: () => []
+          },
+          pageSize: {
+            type: Number,
+            required: false,
+            default: 5
           }
         },
         components: {
-            ProductDetails,
+         
         },
         computed: {
           filteredProducts() {
@@ -59,6 +71,17 @@ import ProductDetails from '@/components/ProductDetails.vue';
               if(a[this.sortName] > b[this.sortName]) return 1 * modifier;
               return 0;
             })
+          },
+          sortedFilteredPaginatedProducts() {
+            const start = (this.pageNumber-1) * this.pageSize,
+                  end = start + this.pageSize;
+
+            return this.sortedFilteredProducts.slice(start, end);
+          },
+          pageCount() {
+            let l = this.filteredProducts.length;
+            let s = this.pageSize;
+            return Math.ceil(l / s);
           }
         },
         methods: {
@@ -68,6 +91,33 @@ import ProductDetails from '@/components/ProductDetails.vue';
               this.sortDir = this.sortDir==='asc'?'desc':'asc';
             }
             this.sortName = s;
+          },
+          nextPage() {
+            this.pageNumber++;
+            this.selectedProduct = null;
+          },
+          prevPage() {
+            this.pageNumber--;
+            this.selectedProduct = null;
+          },
+          onSelect(product) {
+            this.$router.push({ name: "product", params: { id: product.id } });
+          }
+        },
+        watch: {
+          // reset pagination when filtering
+          filterName() {
+            this.pageNumber = 1;
+             this.selectedProduct = null;
+          },
+          // reset pagination when sorting
+          sortName() {
+            this.pageNumber = 1;
+             this.selectedProduct = null;
+          },
+          sortDir() {
+            this.pageNumber = 1;
+             this.selectedProduct = null;
           }
         },
     }
