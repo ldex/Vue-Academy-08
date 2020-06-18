@@ -14,7 +14,6 @@
 
 <script>
 import ProductList from '@/components/ProductList.vue';
-import ProductService from '@/services/ProductService.js';
 
 export default {
   name: 'app',
@@ -23,22 +22,30 @@ export default {
   },
   data() {
     return {
-      products: [],
-      error: null,
-      loading: false
+      error: null
+    }
+  },
+  computed: {
+      products() {
+        return this.$store.state.products;
+      },
+      loading() {
+        return this.$store.state.isLoading;
+      }
+  },
+  methods: {
+    fetchProducts() {
+      this
+        .$store
+        .dispatch('fetchProducts')
+        .catch(error => {
+          this.error = error;
+        });
     }
   },
   created () {
-    this.loading = true;
-    ProductService.getProducts()
-      .then(response => {
-        this.products = response.data;
-      })
-      .catch(error => {
-        this.error = error;
-      })
-      .finally(() => this.loading = false);
-  },
+    this.fetchProducts();
+  }
 }
 </script>
 

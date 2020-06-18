@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Products from '@/views/Products.vue';
 import Error from '@/views/Error.vue';
 import ProductDetails from '@/components/ProductDetails.vue';
+import ProductInsert from '@/components/ProductInsert.vue';
 
 Vue.use(VueRouter)
 
@@ -17,6 +18,11 @@ Vue.use(VueRouter)
     path: '/products',
     name: 'products',
     component: Products
+  },
+  {
+    path: '/product/insert', // order important! before :id route
+    name: 'productInsert',
+    component: ProductInsert
   },
   {
     path: '/product/:id',
